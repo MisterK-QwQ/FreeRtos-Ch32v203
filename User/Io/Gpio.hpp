@@ -7,11 +7,10 @@ typedef void (*InitCallback)(void*);
 
 class Gpio {
   public:
-    union {
-        Expand expand = {nullptr, ExpandType::None};
-        InitCallback initCallback;
-    };
+    InitCallback initCallback;
+    Expand expand = {nullptr, ExpandType::None};
 
+    
     bool Defaultv = false;
     bool initialized = false;
     void *Periph = nullptr;

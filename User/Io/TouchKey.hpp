@@ -6,11 +6,13 @@ class TouchKey : public Gpio {
     bool LED=true;
     ADCExpand AdcData;
     TouchKey() : Gpio (GPIOA, {GPIO_Pin_2,GPIO_Speed_50MHz,GPIO_Mode_AIN}) {
-        AdcData.Type=ExpandType::I2C;
+        AdcData.Type=ExpandType::ADC;
         AdcData.ExpandMode=ADC1;
         AdcData.ADC_Channel=ADC_Channel_2;
         AdcData.IDATAR1=0x10;
         AdcData.RDATAR=0x8;
+
+
         AdcData.ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
         AdcData.ADC_InitStructure.ADC_ScanConvMode = DISABLE;
         AdcData.ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
@@ -38,15 +40,8 @@ class TouchKey : public Gpio {
     }
     static void task1_task(TouchKey*_this) {
       while (1) {
-
         uint16_t currentAdcValue = _this->AdcData.GetRDATAR();
-        if(currentAdcValue) {
-            _this->LED=true;
-        } else {
-            _this->LED=false;
-        }
-        printf("currentAdcValue %d\r\n",currentAdcValue);
-        GPIO_WriteBit(GPIOA, GPIO_Pin_1, _this->LED ? Bit_SET:Bit_RESET);
+        GPIO_WriteBit(GPIOA, GPIO_Pin_0,currentAdcValue>=4020 ? Bit_SET:Bit_RESET);
       }
 
        

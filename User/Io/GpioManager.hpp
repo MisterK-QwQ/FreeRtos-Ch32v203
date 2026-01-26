@@ -48,14 +48,16 @@ static int m_count = 0u;
 static Gpio m_gpio[MAX_GPIO_PINS];
 
 bool ExpandClock (void *m_Mode) {
-    ClockSource clkSource = ClockSource::MAX;     // 时钟源标记，默认无效
-    uint32_t RCC_APBPeriph = 0;                   // 外设时钟宏（如RCC_APB2Periph_ADC1）
-    IOPeriph_Type RccType = IOPeriph_Type::None;  // 总线类型，默认未知
+    ClockSource clkSource = ClockSource::MAX;     
+    uint32_t RCC_APBPeriph = 0;                   
+    IOPeriph_Type RccType = IOPeriph_Type::None;  
 
     if (m_Mode == nullptr) {
         return false;
     }
-    /************************ APB2 高速总线外设 ************************/
+
+    /************************ 统一串联所有外设判断 ************************/
+    // APB2 高速总线外设
     if (m_Mode == ADC1) {
         clkSource = ClockSource::_ADC1;
         RCC_APBPeriph = RCC_APB2Periph_ADC1;
@@ -77,9 +79,8 @@ bool ExpandClock (void *m_Mode) {
         RCC_APBPeriph = RCC_APB2Periph_USART1;
         RccType = IOPeriph_Type::APB2_peripheral;
     }
-
-    /************************ APB1 低速总线外设 ************************/
-    if (m_Mode == TIM2) {
+    // APB1 低速总线外设
+    else if (m_Mode == TIM2) {
         clkSource = ClockSource::_TIM2;
         RCC_APBPeriph = RCC_APB1Periph_TIM2;
         RccType = IOPeriph_Type::APB1_peripheral;
@@ -124,13 +125,14 @@ bool ExpandClock (void *m_Mode) {
         RCC_APBPeriph = RCC_APB1Periph_CAN1;
         RccType = IOPeriph_Type::APB1_peripheral;
     }
-    /************************ AHB 高速总线外设 ************************/
+    // AHB 高速总线外设
     else if (m_Mode == DMA1) {
         clkSource = ClockSource::_DMA1;
         RCC_APBPeriph = RCC_AHBPeriph_DMA1;
         RccType = IOPeriph_Type::AHB_peripheral;
     }
 
+    // 后续时钟使能逻辑不变
     if (clkSource == ClockSource::MAX || RCC_APBPeriph == 0 || RccType == IOPeriph_Type::None) {
         return false;
     }
@@ -150,11 +152,10 @@ bool ExpandClock (void *m_Mode) {
         }
         m_Clock[static_cast<size_t> (clkSource)].enabled = true;
     }
-
     m_Clock[static_cast<size_t> (clkSource)].count++;
-
     return true;
 }
+
 
 bool IoClock (void *m_Periph) {
     ClockSource clkSource = ClockSource::MAX;

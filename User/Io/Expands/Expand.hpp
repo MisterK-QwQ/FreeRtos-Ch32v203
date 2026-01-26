@@ -33,11 +33,10 @@ struct I2CExpand : public Expand {
 };
 struct ADCExpand:public Expand{
     ADC_InitTypeDef ADC_InitStructure;
-    union{
-        uint8_t ADC_Channel; 
-        uint32_t IDATAR1;    //充电
-        uint32_t RDATAR; //放电  
-    };
+    uint8_t ADC_Channel; 
+    uint32_t IDATAR1;    //充电
+    uint32_t RDATAR; //放电  
+
     
 uint32_t GetRDATAR(){
     ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_7Cycles5 );
