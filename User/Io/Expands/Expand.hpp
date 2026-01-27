@@ -11,18 +11,14 @@ enum class ExpandType{
     CAN
 };
 
-
 struct Expand{
-    void* ExpandMode;
-    ExpandType Type;
-    union{
-        TaskHandle_t Task_Handler=nullptr;
-    };
+    void* Modx=nullptr;
+    TaskHandle_t Task_Handler=nullptr;
 };
 
 struct TIMExpand:public Expand{
-    TIM_OCInitTypeDef TIM_OCInitStructure;
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+    TIM_OCInitTypeDef TIM_OC;
+    TIM_TimeBaseInitTypeDef TIM_Base;
 };
 struct  SPIExpand:public Expand{
     SPI_InitTypeDef  SPI_InitStructure;
@@ -36,18 +32,20 @@ struct ADCExpand:public Expand{
     uint8_t ADC_Channel; 
     uint32_t IDATAR1;    //充电
     uint32_t RDATAR; //放电  
-
     
-uint32_t GetRDATAR(){
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_7Cycles5 );
-    TKey1->IDATAR1 = this->IDATAR1;  // 充电时间（对齐官方案例0x10）
-    TKey1->RDATAR = this->RDATAR;    // 放电时间（对齐官方案例0x8）
-    while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC ));
-    return (uint16_t) TKey1->RDATAR;
-}
+    
+    uint32_t GetRDATAR(){
+        if(Modx == nullptr) return 0;
+        ADC_TypeDef* adc = (ADC_TypeDef*)Modx;
+        ADC_RegularChannelConfig(adc, ADC_Channel, 1, ADC_SampleTime_7Cycles5);
+        adc->IDATAR1 = this->IDATAR1;
+        adc->RDATAR = this->RDATAR;
+        while(!ADC_GetFlagStatus(adc,ADC_FLAG_EOC ));
+        return adc->RDATAR;
+    }
 
 };
-struct DAMExpand:public Expand{
+struct DMAExpand:public Expand{
     uint32_t DummyByte         = 0xff;
     DMA_InitTypeDef  DMA_InitStructure;
 };

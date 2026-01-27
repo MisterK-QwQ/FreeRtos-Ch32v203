@@ -1,224 +1,102 @@
 #pragma once
 #include "Gpio.hpp"
 #include "TouchKey.hpp"
+#include "R_Upwheel.hpp"
+#include "LED.hpp"
+
+#include <task.h>
+#include <semphr.h>
+#include <FreeRTOS.h>
+
+
+#define RegTask(Fun, Name, size, pragma, level) \
+    TaskHandle_t Task_Handler##Name = nullptr; \
+    xTaskCreate((TaskFunction_t)Fun, \
+                (const char *)#Name, \
+                (uint16_t)size, \
+                (void *)pragma, \
+                (UBaseType_t)level, \
+                (TaskHandle_t *)&Task_Handler##Name);
+
+#define TRegGpio(Type, size, level)\
+static Type g_##Type;\
+GpioManager::AddGpio(g_##Type);\
+RegTask(g_##Type.Task, Type, size, &g_##Type, level);\
+
 
 namespace GpioManager {
-enum ClockSource {
-    _AFIO,
-    _GPIOA,
-    _GPIOB,
-    _GPIOC,
-    _GPIOD,
-    _ADC1,
-    _ADC2,
-    _TIM1,
-    _TIM2,
-    _TIM3,
-    _TIM4,
-    _TIM5,
-    _SPI1,
-    _SPI2,
-    _USART1,
-    _USART2,
-    _USART3,
-    _USART4,
-    _I2C1,
-    _I2C2,
-    _DMA1,
-    _CAN1,
-    _USB,
-    MAX
-};
 
-struct ClockItem {
-    bool enabled = false;  // 时钟是否已使能（防止重复使能）
-    uint16_t count = 0;    // 时钟使用计数（便于后续释放管理）
-};
+void IoClock(void *m_Periph, bool v) {
+    uint32_t RCC_APBPeriph = 0;
+    if (m_Periph == GPIOA) RCC_APBPeriph = RCC_APB2Periph_GPIOA;
+    else if (m_Periph == GPIOB) RCC_APBPeriph = RCC_APB2Periph_GPIOB;
+    else if (m_Periph == GPIOC) RCC_APBPeriph = RCC_APB2Periph_GPIOC;
+    else if (m_Periph == GPIOD) RCC_APBPeriph = RCC_APB2Periph_GPIOD;
+    else if (m_Periph == AFIO) RCC_APBPeriph = RCC_APB2Periph_AFIO;
 
-static ClockItem m_Clock[static_cast<size_t> (ClockSource::MAX)] = {0};
+    if (RCC_APBPeriph) RCC_APB2PeriphClockCmd(RCC_APBPeriph, v ? ENABLE : DISABLE);
+}
 
-using IOPeriph_Type = enum {
-    None,
-    AHB_peripheral,
-    APB2_peripheral,
-    APB1_peripheral
-};
 
+#define MAX_GPIO_PINS 4
 static int m_count = 0u;
 static Gpio m_gpio[MAX_GPIO_PINS];
-
-bool ExpandClock (void *m_Mode) {
-    ClockSource clkSource = ClockSource::MAX;     
-    uint32_t RCC_APBPeriph = 0;                   
-    IOPeriph_Type RccType = IOPeriph_Type::None;  
-
-    if (m_Mode == nullptr) {
-        return false;
+/**
+ * @brief 注册Gpio到m_Gpio
+ * 
+ * @param m_Gpio 
+ */
+static void AddGpio(const Gpio& m_Gpio) {
+    if (m_count < MAX_GPIO_PINS) {
+        m_gpio[m_count++] = m_Gpio;
     }
-
-    /************************ 统一串联所有外设判断 ************************/
-    // APB2 高速总线外设
-    if (m_Mode == ADC1) {
-        clkSource = ClockSource::_ADC1;
-        RCC_APBPeriph = RCC_APB2Periph_ADC1;
-        RccType = IOPeriph_Type::APB2_peripheral;
-    } else if (m_Mode == ADC2) {
-        clkSource = ClockSource::_ADC2;
-        RCC_APBPeriph = RCC_APB2Periph_ADC2;
-        RccType = IOPeriph_Type::APB2_peripheral;
-    } else if (m_Mode == TIM1) {
-        clkSource = ClockSource::_TIM1;
-        RCC_APBPeriph = RCC_APB2Periph_TIM1;
-        RccType = IOPeriph_Type::APB2_peripheral;
-    } else if (m_Mode == SPI1) {
-        clkSource = ClockSource::_SPI1;
-        RCC_APBPeriph = RCC_APB2Periph_SPI1;
-        RccType = IOPeriph_Type::APB2_peripheral;
-    } else if (m_Mode == USART1) {
-        clkSource = ClockSource::_USART1;
-        RCC_APBPeriph = RCC_APB2Periph_USART1;
-        RccType = IOPeriph_Type::APB2_peripheral;
+}
+static void AddGpio(void *m_Periph, GPIO_InitTypeDef m_def, bool defv = false) {
+    if (m_count < MAX_GPIO_PINS) {
+        m_gpio[m_count++] = Gpio(m_Periph, m_def, defv);
     }
-    // APB1 低速总线外设
-    else if (m_Mode == TIM2) {
-        clkSource = ClockSource::_TIM2;
-        RCC_APBPeriph = RCC_APB1Periph_TIM2;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == TIM3) {
-        clkSource = ClockSource::_TIM3;
-        RCC_APBPeriph = RCC_APB1Periph_TIM3;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == TIM4) {
-        clkSource = ClockSource::_TIM4;
-        RCC_APBPeriph = RCC_APB1Periph_TIM4;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == TIM5) {
-        clkSource = ClockSource::_TIM5;
-        RCC_APBPeriph = RCC_APB1Periph_TIM5;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == SPI2) {
-        clkSource = ClockSource::_SPI2;
-        RCC_APBPeriph = RCC_APB1Periph_SPI2;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == USART2) {
-        clkSource = ClockSource::_USART2;
-        RCC_APBPeriph = RCC_APB1Periph_USART2;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == USART3) {
-        clkSource = ClockSource::_USART3;
-        RCC_APBPeriph = RCC_APB1Periph_USART3;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == UART4) {
-        clkSource = ClockSource::_USART4;
-        RCC_APBPeriph = RCC_APB1Periph_UART4;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == I2C1) {
-        clkSource = ClockSource::_I2C1;
-        RCC_APBPeriph = RCC_APB1Periph_I2C1;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == I2C2) {
-        clkSource = ClockSource::_I2C2;
-        RCC_APBPeriph = RCC_APB1Periph_I2C2;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    } else if (m_Mode == CAN1) {
-        clkSource = ClockSource::_CAN1;
-        RCC_APBPeriph = RCC_APB1Periph_CAN1;
-        RccType = IOPeriph_Type::APB1_peripheral;
-    }
-    // AHB 高速总线外设
-    else if (m_Mode == DMA1) {
-        clkSource = ClockSource::_DMA1;
-        RCC_APBPeriph = RCC_AHBPeriph_DMA1;
-        RccType = IOPeriph_Type::AHB_peripheral;
-    }
-
-    // 后续时钟使能逻辑不变
-    if (clkSource == ClockSource::MAX || RCC_APBPeriph == 0 || RccType == IOPeriph_Type::None) {
-        return false;
-    }
-    if (!m_Clock[static_cast<size_t> (clkSource)].enabled) {
-        switch (RccType) {
-        case IOPeriph_Type::APB2_peripheral:
-            RCC_APB2PeriphClockCmd (RCC_APBPeriph, ENABLE);
-            break;
-        case IOPeriph_Type::APB1_peripheral:
-            RCC_APB1PeriphClockCmd (RCC_APBPeriph, ENABLE);
-            break;
-        case IOPeriph_Type::AHB_peripheral:
-            RCC_AHBPeriphClockCmd (RCC_APBPeriph, ENABLE);
-            break;
-        default:
-            return false;
-        }
-        m_Clock[static_cast<size_t> (clkSource)].enabled = true;
-    }
-    m_Clock[static_cast<size_t> (clkSource)].count++;
-    return true;
 }
 
-
-bool IoClock (void *m_Periph) {
-    ClockSource clkSource = ClockSource::MAX;
-    uint32_t RCC_APBPeriph = 0;
-
-    if (m_Periph == GPIOA) {
-        clkSource = ClockSource::_GPIOA;
-        RCC_APBPeriph = RCC_APB2Periph_GPIOA;
-    } else if (m_Periph == GPIOB) {
-        clkSource = ClockSource::_GPIOB;
-        RCC_APBPeriph = RCC_APB2Periph_GPIOB;
-    } else if (m_Periph == GPIOC) {
-        clkSource = ClockSource::_GPIOC;
-        RCC_APBPeriph = RCC_APB2Periph_GPIOC;
-    } else if (m_Periph == GPIOD) {
-        clkSource = ClockSource::_GPIOD;
-        RCC_APBPeriph = RCC_APB2Periph_GPIOD;
-    }
-
-    if (!m_Clock[static_cast<size_t> (ClockSource::_AFIO)].enabled) {
-        RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
-        m_Clock[static_cast<size_t> (ClockSource::_AFIO)].enabled = true;
-        m_Clock[static_cast<size_t> (ClockSource::_AFIO)].count++;
-    }
-
-    if (clkSource != ClockSource::MAX && RCC_APBPeriph != 0) {
-        if (!m_Clock[static_cast<size_t> (clkSource)].enabled) {
-            RCC_APB2PeriphClockCmd (RCC_APBPeriph, ENABLE);
-            m_Clock[static_cast<size_t> (clkSource)].enabled = true;
-        }
-        m_Clock[static_cast<size_t> (clkSource)].count++;
-        return true;
-    }
-    return false;
-}
-
-static void AddGpio (void *m_Periph, GPIO_InitTypeDef m_def, bool defv = false) {
-    m_gpio[m_count] = Gpio (m_Periph, m_def, defv);
-    m_count++;
-}
-
-static void AddGpio (Gpio m_Gpio) {
-    m_gpio[m_count] = m_Gpio;
-    m_count++;
+/**
+ * @brief 获取类实列
+ *
+ * @tparam T 必须为Gpio的子类否则会出现空地址
+ * @param idx Gpio序号
+ */
+template <typename T>
+static T* Get(uint16_t idx) {
+    return (idx < m_count) ? (T*)&m_gpio[idx] : nullptr;
 }
 
 static void Init() {
-    AddGpio (GPIOA, {GPIO_Pin_0, GPIO_Speed_50MHz, GPIO_Mode_Out_PP}, true);
-    AddGpio (TouchKey());
+    AddGpio(GPIOB, {GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_Out_PP}, true);  //临时变量注册进行初始化
+    TRegGpio(TouchKey,128,5);   //触摸案列
+  //  static TouchKey g_touchKey;
+  //  AddGpio(TouchKey());
+    //Regask(g_touchKey.TouchKey_task, tack, 128, &g_touchKey, 5);
+    // xTaskCreate ((TaskFunction_t)g_touchKey.TouchKey_task,
+    //                 (const char *)"tk",
+    //                 (uint16_t)128,
+    //                 (void *)&g_touchKey,
+    //                 (UBaseType_t)5,
+    //                 (TaskHandle_t *)&g_touchKey.AdcData.Task_Handler);
+    TRegGpio(LED,128,5);  //闪烁案列
+    // static LED g_led;
+    // AddGpio(g_led);
+    // xTaskCreate((TaskFunction_t)g_led.LED_task,
+    //                 (const char *)"LEDTask",
+    //                 (uint16_t)128,
+    //                 (void *)&g_led,
+    //                 (UBaseType_t)5,
+    //                 (TaskHandle_t *)&g_led.Data.Task_Handler);
 
     for (int u = 0u; u < m_count; u++) {
-        auto &io = m_gpio[u];
-        if (io.initialized)
-            continue;
-        IoClock(io.Periph);
-        if(io.expand.Type!=ExpandType::None){
-            if(io.expand.ExpandMode)
-                ExpandClock(io.expand.ExpandMode);
-            else printf("ExpandMode null");
-        }
-        GPIO_Init ((GPIO_TypeDef *)io.Periph, &io.def);
-        io.init();
-        io.initialized = true;
+        if (m_gpio[u].initialized) continue;
+        IoClock(m_gpio[u].Periph, true);
+        GPIO_Init((GPIO_TypeDef *)m_gpio[u].Periph, &m_gpio[u].def);
+        m_gpio[u].init();
+        m_gpio[u].initialized = true;
     }
 }
 };  // namespace GpioManager
+
