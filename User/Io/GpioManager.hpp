@@ -40,7 +40,6 @@ void IoClock(void *m_Periph, bool v) {
     if (RCC_APBPeriph) RCC_APB2PeriphClockCmd(RCC_APBPeriph, v ? ENABLE : DISABLE);
 }
 
-
 #define MAX_GPIO_PINS 4
 static int m_count = 0u;
 static Gpio m_gpio[MAX_GPIO_PINS];
@@ -76,7 +75,7 @@ static void Init() {
     TRegGpio(TouchKey,128,5);   //触摸案列
     TRegGpio(LED,128,5);  //闪烁案列
     TRegGpio(RUpWheel,128,5);  //闪烁案列
-    
+
     for (int u = 0u; u < m_count; u++) {
         if (m_gpio[u].initialized) continue;
         IoClock(m_gpio[u].Periph, true);

@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 echo 添加文件到暂存区...
 git add .
 echo 提交代码到本地仓库...
-git commit -m "减少整体结构,增加注册Gpio和任务宏。"
+git commit -m "修改FreeRTOSConfig配置"
 :null->项目更新注释
 git branch -M main
 git push -u origin main
