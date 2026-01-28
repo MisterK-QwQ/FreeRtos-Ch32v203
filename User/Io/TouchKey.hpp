@@ -29,7 +29,7 @@ class TouchKey : public Gpio {
         ADC1->CTLR1 |= (1 << 26) | (1 << 24);
     }
 
-    inline static void Task (TouchKey *_this) {
+    inline static void Task (TouchKey *_this) { //务必将任务函数都名为Task
         while (true) {
             uint16_t currentAdcValue = _this->AdcData.GetRDATAR();
             

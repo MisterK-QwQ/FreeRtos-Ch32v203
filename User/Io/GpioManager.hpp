@@ -18,9 +18,12 @@
                 (UBaseType_t)level, \
                 (TaskHandle_t *)&Task_Handler##Name);
 
-#define TRegGpio(Type, size, level)\
+#define RegGpio(Type)\
 static Type g_##Type;\
-GpioManager::AddGpio(g_##Type);\
+GpioManager::AddGpio(g_##Type);
+
+#define TRegGpio(Type, size, level)\
+RegGpio(Type);\
 RegTask(g_##Type.Task, Type, size, &g_##Type, level);\
 
 
@@ -71,25 +74,9 @@ static T* Get(uint16_t idx) {
 static void Init() {
     AddGpio(GPIOB, {GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_Out_PP}, true);  //临时变量注册进行初始化
     TRegGpio(TouchKey,128,5);   //触摸案列
-  //  static TouchKey g_touchKey;
-  //  AddGpio(TouchKey());
-    //Regask(g_touchKey.TouchKey_task, tack, 128, &g_touchKey, 5);
-    // xTaskCreate ((TaskFunction_t)g_touchKey.TouchKey_task,
-    //                 (const char *)"tk",
-    //                 (uint16_t)128,
-    //                 (void *)&g_touchKey,
-    //                 (UBaseType_t)5,
-    //                 (TaskHandle_t *)&g_touchKey.AdcData.Task_Handler);
     TRegGpio(LED,128,5);  //闪烁案列
-    // static LED g_led;
-    // AddGpio(g_led);
-    // xTaskCreate((TaskFunction_t)g_led.LED_task,
-    //                 (const char *)"LEDTask",
-    //                 (uint16_t)128,
-    //                 (void *)&g_led,
-    //                 (UBaseType_t)5,
-    //                 (TaskHandle_t *)&g_led.Data.Task_Handler);
-
+    TRegGpio(RUpWheel,128,5);  //闪烁案列
+    
     for (int u = 0u; u < m_count; u++) {
         if (m_gpio[u].initialized) continue;
         IoClock(m_gpio[u].Periph, true);

@@ -8,7 +8,7 @@ public:
 
                      
     }
-    inline static void Task(LED* _this) {
+    inline static void Task(LED* _this) {   //务必将任务函数都名为Task
       while (true) {
         GPIO_WriteBit(GPIOB, GPIO_Pin_0,Bit_RESET);
         vTaskDelay(200); 

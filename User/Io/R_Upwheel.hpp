@@ -10,20 +10,11 @@ public:
         TimData.TIM_Base.TIM_Prescaler=4800-1;
         TimData.TIM_Base.TIM_ClockDivision=TIM_CKD_DIV1;
         TimData.TIM_Base.TIM_CounterMode=TIM_CounterMode_Up;
-
         TimData.TIM_OC.TIM_OCMode = TIM_OCMode_PWM2;
         TimData.TIM_OC.TIM_OutputState = TIM_OutputState_Enable;
         TimData.TIM_OC.TIM_Pulse = 0;  
         TimData.TIM_OC.TIM_OCPolarity = TIM_OCPolarity_High;
-        
-        xTaskCreate((TaskFunction_t)RUpWheel_task,
-                (const char *)"RUpWheeltask",
-                (uint16_t)128,
-                (void *)this,
-                (UBaseType_t)5,
-                (TaskHandle_t *)&TimData.Task_Handler);
 
-        //AddExpand(TimData);
         RegisterFunc((GpioInitCallback)init);
     }
 
@@ -37,7 +28,7 @@ public:
         TIM_Cmd( TIM1, ENABLE);
     }
 
-    static void RUpWheel_task(RUpWheel* _this){
+    static void Task(RUpWheel* _this){
         while (true) {
             TIM_SetCompare2(TIM1, _this->i);
             _this->i++;
