@@ -1,4 +1,6 @@
 #pragma once
+#include "ch32v20x.h"
+#include "ch32v20x_gpio.h"
 #include "Expands/Expand.hpp"
 typedef void (*GpioInitCallback)(void*);
 
@@ -7,13 +9,12 @@ public:
     GpioInitCallback initCallback = nullptr;
    // Expand expand = {nullptr};
     bool initialized = false;
-    bool Defaultv = false;
     void *Periph = nullptr;
     GPIO_InitTypeDef def = {0};
 
     Gpio() = default;
-    Gpio(void *m_Periph, GPIO_InitTypeDef m_def, bool v = false)
-        : Periph(m_Periph), def(m_def), Defaultv(v){};
+    Gpio(void *m_Periph, GPIO_InitTypeDef m_def)
+        : Periph(m_Periph), def(m_def){};
 
     // void AddExpand(Expand m_Expand) {
     //     expand = m_Expand;
@@ -23,9 +24,6 @@ public:
      * @brief 初始化 改变Gpio默认电平 并且调用已注册的函数传入类实列
      */
     void init() {
-        if (def.GPIO_Mode != GPIO_Mode_AIN) {
-            GPIO_WriteBit((GPIO_TypeDef *)Periph, def.GPIO_Pin, Defaultv ? Bit_SET : Bit_RESET);
-        }
         if (initCallback) initCallback(this);
     }
     /**

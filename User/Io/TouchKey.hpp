@@ -1,7 +1,6 @@
 #pragma once
-#include "Gpio.hpp"
-#include "Expands/Expand.hpp"
-
+#include "GpioManager.hpp"
+#include "LED.hpp"
 class TouchKey : public Gpio {
   public:
     ADCExpand AdcData;
@@ -17,9 +16,8 @@ class TouchKey : public Gpio {
         AdcData.ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
         AdcData.ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
         AdcData.ADC_InitStructure.ADC_NbrOfChannel = 1;
-
         RegisterFunc (oninit);
-    }
+    };
 
     inline static void oninit (TouchKey *_this) {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_ADC1, ENABLE);
@@ -27,14 +25,15 @@ class TouchKey : public Gpio {
         ADC_Init (ADC1, &_this->AdcData.ADC_InitStructure);
         ADC_Cmd (ADC1, ENABLE);
         ADC1->CTLR1 |= (1 << 26) | (1 << 24);
-    }
+    };
 
     inline static void Task (TouchKey *_this) { //务必将任务函数都名为Task
         while (true) {
-            uint16_t currentAdcValue = _this->AdcData.GetRDATAR();
-            
-            GPIO_WriteBit (GPIOB, GPIO_Pin_1, currentAdcValue >= 4050 ? Bit_SET : Bit_RESET);
-            printf ("TouchKey2: %d\n\r", currentAdcValue);
+            if(GpioManager::Get<LED>(1)->Led){
+                uint16_t currentAdcValue = _this->AdcData.GetRDATAR();
+                GPIO_WriteBit (GPIOB, GPIO_Pin_1, currentAdcValue >= 4050 ? Bit_SET : Bit_RESET);
+            }else  GPIO_WriteBit (GPIOB, GPIO_Pin_1, Bit_SET);
+
         }
     }
 };

@@ -1,4 +1,7 @@
 #pragma once
+#include "FreeRTOS.h"
+#include "task.h"
+#include "stdio.h"
 
 enum class ExpandType{
     None,
@@ -32,7 +35,6 @@ struct ADCExpand:public Expand{
     uint8_t ADC_Channel; 
     uint32_t IDATAR1;    //³äµç
     uint32_t RDATAR; //·Åµç  
-    
     
     uint32_t GetRDATAR(){
         if(Modx == nullptr) return 0;

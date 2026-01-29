@@ -5,7 +5,7 @@
 			"type": "mrs-debugger",
 			"request": "launch",
 			"name": "CH32V203Template",
-			"cwd": "d:\\文档\\MounRiver\\CH32V203Template",
+			"cwd": "d:\\文档\\MounRiver\\FreeRtos-Ch32v203",
 			"openOCDCfg": {
 				"useLocalOpenOCD": true,
 				"executable": "d:/Utils/MounRiver/MounRiver_Studio2/resources/app/resources/win32/components/WCH/OpenOCD/OpenOCD/bin/openocd.exe",
@@ -39,8 +39,8 @@
 					"additionalCommands": []
 				},
 				"loadedFiles": {
-					"executableFile": "d:\\文档\\MounRiver\\CH32V203Template\\obj\\CH32V203Template.elf",
-					"symbolFile": "d:\\文档\\MounRiver\\CH32V203Template\\obj\\CH32V203Template.elf",
+					"executableFile": "d:\\文档\\MounRiver\\FreeRtos-Ch32v203\\obj\\CH32V203Template.elf",
+					"symbolFile": "d:\\文档\\MounRiver\\FreeRtos-Ch32v203\\obj\\CH32V203Template.elf",
 					"executableFileOffset": 0,
 					"symbolFileOffset": 0
 				},

@@ -1,4 +1,5 @@
-main.o: ../main.cpp d:/文档/MounRiver/FreeRtos-Ch32v203/Debug/debug.h \
+User/Io/GpioManager.o: ../User/Io/GpioManager.cpp \
+ ../User/Io/GpioManager.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/Peripheral/inc/ch32v20x.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/Core/core_riscv.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/system_ch32v20x.h \
@@ -23,7 +24,9 @@ main.o: ../main.cpp d:/文档/MounRiver/FreeRtos-Ch32v203/Debug/debug.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/Peripheral/inc/ch32v20x_usart.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/Peripheral/inc/ch32v20x_wwdg.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/ch32v20x_it.h \
+ d:/文档/MounRiver/FreeRtos-Ch32v203/Debug/debug.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/Peripheral/inc/ch32v20x_misc.h \
+ ../User/Io/Gpio.hpp ../User/Io/Expands/Expand.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/FreeRTOS.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/FreeRTOSConfig.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/projdefs.h \
@@ -33,14 +36,10 @@ main.o: ../main.cpp d:/文档/MounRiver/FreeRtos-Ch32v203/Debug/debug.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/mpu_wrappers.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/task.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/list.h \
- d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/semphr.h \
- d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/queue.h \
- d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/task.h \
- d:/文档/MounRiver/FreeRtos-Ch32v203/User/Io/GpioManager.hpp \
- d:/文档/MounRiver/FreeRtos-Ch32v203/User/Io/Gpio.hpp \
- d:/文档/MounRiver/FreeRtos-Ch32v203/User/Io/Expands/Expand.hpp
+ ../User/Io/R_Upwheel.hpp ../User/Io/L_Upwheel.hpp \
+ ../User/Io/R_Dpwheel.hpp ../User/Io/L_Dpwheel.hpp
 
-d:/文档/MounRiver/FreeRtos-Ch32v203/Debug/debug.h:
+../User/Io/GpioManager.hpp:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/Peripheral/inc/ch32v20x.h:
 
@@ -90,7 +89,13 @@ d:/文档/MounRiver/FreeRtos-Ch32v203/Peripheral/inc/ch32v20x_wwdg.h:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/User/ch32v20x_it.h:
 
+d:/文档/MounRiver/FreeRtos-Ch32v203/Debug/debug.h:
+
 d:/文档/MounRiver/FreeRtos-Ch32v203/Peripheral/inc/ch32v20x_misc.h:
+
+../User/Io/Gpio.hpp:
+
+../User/Io/Expands/Expand.hpp:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/FreeRTOS.h:
 
@@ -110,14 +115,10 @@ d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/task.h:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/list.h:
 
-d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/semphr.h:
+../User/Io/R_Upwheel.hpp:
 
-d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/queue.h:
+../User/Io/L_Upwheel.hpp:
 
-d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/task.h:
+../User/Io/R_Dpwheel.hpp:
 
-d:/文档/MounRiver/FreeRtos-Ch32v203/User/Io/GpioManager.hpp:
-
-d:/文档/MounRiver/FreeRtos-Ch32v203/User/Io/Gpio.hpp:
-
-d:/文档/MounRiver/FreeRtos-Ch32v203/User/Io/Expands/Expand.hpp:
+../User/Io/L_Dpwheel.hpp:

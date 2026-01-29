@@ -47,4 +47,5 @@ FreeRTOS/portable/MemMang \
 Peripheral/src \
 Startup \
 User \
+User/Io \
 User/Utils \

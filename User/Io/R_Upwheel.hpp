@@ -1,42 +1,40 @@
 #pragma once
 #include "Gpio.hpp"
 #include "Expands/Expand.hpp"
-class RUpWheel :public Gpio{
-public:
-    int i=0;
-    TIMExpand TimData;
-    RUpWheel():Gpio(GPIOA,{GPIO_Pin_9,GPIO_Speed_50MHz,GPIO_Mode_AF_PP}){
-        TimData.TIM_Base.TIM_Period=100-1;
-        TimData.TIM_Base.TIM_Prescaler=4800-1;
-        TimData.TIM_Base.TIM_ClockDivision=TIM_CKD_DIV1;
-        TimData.TIM_Base.TIM_CounterMode=TIM_CounterMode_Up;
-        TimData.TIM_OC.TIM_OCMode = TIM_OCMode_PWM2;
-        TimData.TIM_OC.TIM_OutputState = TIM_OutputState_Enable;
-        TimData.TIM_OC.TIM_Pulse = 0;  
-        TimData.TIM_OC.TIM_OCPolarity = TIM_OCPolarity_High;
 
-        RegisterFunc((GpioInitCallback)init);
+class RUpWheel : public Gpio {
+  public:
+    TIMExpand RUTimData;
+
+    RUpWheel() : Gpio (GPIOA, {GPIO_Pin_7, GPIO_Speed_50MHz, GPIO_Mode_AF_PP}) {
+        RUTimData.TIM_Base.TIM_Period = 100 - 1;       // ARR=99，计数0~99，占空比0~100%
+        RUTimData.TIM_Base.TIM_Prescaler = 10000 - 1;  // PSC=4799，96MHz/4800/100=200Hz PWM
+        RUTimData.TIM_Base.TIM_ClockDivision = TIM_CKD_DIV1;
+        RUTimData.TIM_Base.TIM_CounterMode = TIM_CounterMode_Up;
+
+        RUTimData.TIM_OC.TIM_OCMode = TIM_OCMode_PWM1;  // 仅改这一行
+        RUTimData.TIM_OC.TIM_OutputState = TIM_OutputState_Enable;
+        RUTimData.TIM_OC.TIM_Pulse = 0;
+        RUTimData.TIM_OC.TIM_OCPolarity = TIM_OCPolarity_Low;
+
+        RegisterFunc (init);
     }
 
-    static void init(RUpWheel* _this){
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
-        TIM_TimeBaseInit(TIM1, &_this->TimData.TIM_Base);
-        TIM_OC2Init(TIM1, &_this->TimData.TIM_OC);
-        TIM_CtrlPWMOutputs(TIM1, ENABLE );
-        TIM_OC2PreloadConfig( TIM1, TIM_OCPreload_Enable );
-        TIM_ARRPreloadConfig( TIM1, ENABLE );
-        TIM_Cmd( TIM1, ENABLE);
+    static void init (RUpWheel *_this) {
+        RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
+        RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3, ENABLE);
+
+        TIM_TimeBaseInit (TIM3, &_this->RUTimData.TIM_Base);
+        TIM_OC2Init (TIM3, &_this->RUTimData.TIM_OC);
+        TIM_OC2PreloadConfig (TIM3, TIM_OCPreload_Enable);
+        TIM_ARRPreloadConfig (TIM3, ENABLE);
+        TIM_Cmd (TIM3, ENABLE);  // 启动TIM3
     }
 
-    static void Task(RUpWheel* _this){
+    static void Task (RUpWheel *_this) {
         while (true) {
-            TIM_SetCompare2(TIM1, _this->i);
-            _this->i++;
-            if(_this->i >= 99) {
-                _this->i = 0;
-            }
-            printf("%d\n\r", _this->i);
-        vTaskDelay(10); 
+           // TIM_SetCompare2 (TIM3, _this->i);
+            vTaskDelay (20);
         }
     }
 };

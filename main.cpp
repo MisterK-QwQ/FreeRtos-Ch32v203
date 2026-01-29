@@ -1,7 +1,7 @@
-#include "main.hpp"
 #include "debug.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 #include "Io/GpioManager.hpp"
 
 int main(void)
@@ -15,8 +15,8 @@ int main(void)
     printf("FreeRTOS Kernel Version:%s\r\n",tskKERNEL_VERSION_NUMBER);
 
     GpioManager::Init();  //≥ı ºªØ
-    
-    printf("[INFO] Gpio Size(%d)\r\n",GpioManager::m_count);
+
+
     vTaskStartScheduler();
     while(1){printf("[ERROR] shouldn't run at here!!\n");}
 }
