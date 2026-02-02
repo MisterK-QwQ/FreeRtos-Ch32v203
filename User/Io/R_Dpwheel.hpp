@@ -1,10 +1,12 @@
 #pragma once
 #include "Gpio.hpp"
 #include "Expands/Expand.hpp"
-class RDpWheel :public Gpio{
-public:
+
+class RDpWheel : public Gpio {
+  public:
     TIMExpand RDTimeData;
-    RDpWheel():Gpio(GPIOB,{GPIO_Pin_1,GPIO_Speed_50MHz,GPIO_Mode_AF_PP}){
+
+    RDpWheel() : Gpio (GPIOB, {GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_AF_PP}) {
         RDTimeData.TIM_Base.TIM_Period = 100 - 1;       // ARR=99，计数0~99，占空比0~100%
         RDTimeData.TIM_Base.TIM_Prescaler = 10000 - 1;  // PSC=4799，96MHz/4800/100=200Hz PWM
         RDTimeData.TIM_Base.TIM_ClockDivision = TIM_CKD_DIV1;
@@ -18,7 +20,7 @@ public:
         RegisterFunc (init);
     }
 
-    static void init (RDpWheel *_this) {
+    static auto init (RDpWheel *_this) -> void {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3, ENABLE);
 
@@ -29,9 +31,9 @@ public:
         TIM_Cmd (TIM3, ENABLE);  // 启动TIM3
     }
 
-    static void Task (RDpWheel *_this) {
+    static auto Task (RDpWheel *_this) -> void {
         while (true) {
-            //TIM_SetCompare4 (TIM3, _this->i);
+            // TIM_SetCompare4 (TIM3, _this->i);
             vTaskDelay (20);
         }
     }

@@ -2,27 +2,28 @@
 #include "ch32v20x_conf.h"
 
 class TimerUtil {
-private:
-    uint32_t lastMS; 
-    uint32_t baseMS;    
-    uint32_t diffStartMS; 
-    uint32_t windowMS; 
+  private:
+    uint32_t lastMS;
+    uint32_t baseMS;
+    uint32_t diffStartMS;
+    uint32_t windowMS;
 
-    static uint64_t s_totalMs;      
-    static uint32_t s_prevSysTick;  
+    static uint64_t s_totalMs;
+    static uint32_t s_prevSysTick;
     static const uint32_t SYSTICK_MAX = 0xFFFFFFFFU;
 
     static inline uint32_t getSysTickRaw() {
-        return (uint32_t)SysTick->CNT; 
+        return (uint32_t)SysTick->CNT;
     }
 
     static void sysTickInit() {
         static bool s_inited = false;
-        if (s_inited) return;
+        if (s_inited)
+            return;
 
-        SysTick->CTLR = 0;    
-        SysTick->SR = 0;    
-        SysTick->CMP = SYSTICK_MAX; 
+        SysTick->CTLR = 0;
+        SysTick->SR = 0;
+        SysTick->CMP = SYSTICK_MAX;
         SysTick->CNT = SYSTICK_MAX;
         SysTick->CTLR |= (1 << 0) | (1 << 2) | (1 << 3);
 
@@ -30,7 +31,7 @@ private:
         s_inited = true;
     }
 
-public:
+  public:
     TimerUtil() noexcept {
         uint32_t currMs = getCurrentMs();
         lastMS = currMs;
@@ -52,14 +53,14 @@ public:
         s_totalMs += deltaTick / (SystemCoreClock / 1000);
         s_prevSysTick = currSysTick;
 
-        return static_cast<uint32_t>(s_totalMs);
+        return static_cast<uint32_t> (s_totalMs);
     }
 
     /**
      * 判断指定毫秒数是否已过（基于windowMS）
      * @return true=已过，false=未过
      */
-    bool hasTimePassed(uint32_t ms) {
+    bool hasTimePassed (uint32_t ms) {
         return (getCurrentMs() - windowMS) >= ms;
     }
 
@@ -90,7 +91,7 @@ public:
      * 设置差值计算起点
      * @param difference 偏移的毫秒数
      */
-    void setDifference(uint32_t difference) {
+    void setDifference (uint32_t difference) {
         diffStartMS = getTime() - difference;
     }
 
@@ -116,7 +117,7 @@ public:
      * @param reset 是否自动重置（默认false）
      * @return true=已流逝，false=未流逝
      */
-    bool hasTimedElapsed(uint32_t time, bool reset = false) {
+    bool hasTimedElapsed (uint32_t time, bool reset = false) {
         uint32_t currMs = getCurrentMs();
         if ((currMs - lastMS) > time) {
             if (reset) {
@@ -139,7 +140,7 @@ public:
      * @param milliseconds 要判断的时长（毫秒）
      * @return true=已过，false=未过
      */
-    bool isBaseTimeElapsed(uint32_t milliseconds) {
+    bool isBaseTimeElapsed (uint32_t milliseconds) {
         return (getCurrentMs() - baseMS) > milliseconds;
     }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include "ch32v20x.h"
 
 #include "Gpio.hpp"
@@ -6,12 +7,13 @@
 
 namespace GpioManager {
 static int m_count = 0u;
-static Gpio *m_gpio[MAX_GPIO_PINS];
+static std::array<Gpio*,MAX_GPIO_PINS> m_gpio={nullptr};
+//static Gpio *m_gpio[MAX_GPIO_PINS];
 
-void Init();
-void IoClock (void *m_Periph, bool v);
+auto Init() -> void;
+auto IoClock (void *m_Periph, bool v) -> void;
 
-void AddGpio (Gpio *m_Gpio);
+auto AddGpio (Gpio *m_Gpio) -> void;
 
 //  void AddGpio (void *m_Periph, GPIO_InitTypeDef m_def, bool defv = false);
 
@@ -22,7 +24,7 @@ void AddGpio (Gpio *m_Gpio);
  * @param idx Gpio序号
  */
 template <typename T>
-T *Get (uint16_t idx) {
+[[nodiscard]] auto Get (uint16_t idx) -> T * {
     return (idx < m_count && m_gpio[idx] != nullptr) ? static_cast<T *> (m_gpio[idx]) : nullptr;
 }
 };  // namespace GpioManager
@@ -42,20 +44,27 @@ T *Get (uint16_t idx) {
     GpioManager::AddGpio (&g_##Type);
 
 // 注册一个有任务的Gpio
-#define TRegGpio(Type, size, level) \
-    RegGpio (Type);                 \
-    RegTask (g_##Type.Task, Type, size, &g_##Type, level);
+#define TRegGpio(Type, size, level, Fun) \
+    RegGpio (Type);                      \
+    RegTask (Fun, Type, size, &g_##Type, level);
 
-// 注册一个有多个任务的Gpio
-#define M_TRegGpio(Type, size, level, Num)                        \
-    RegGpio (Type);                                               \
-    for (uint8_t i = 1u; i < Num; i++) {                          \
-        RegTask (g_##Type.Task##i, Type, size, &g_##Type, level); \
-    }
+// 注册一个有多个任务的Gpio   已经废弃  请使用RegTask单独注册
+// #define M_TRegGpio(Type, size, level, ...)                                   \
+//     do {                                                                     \
+//         using TaskFunc = void (*) (Type *);                                  \
+//         RegGpio (Type);                                                      \
+//         const TaskFunc _task_list[] = {__VA_ARGS__};                         \
+//         const uint8_t _task_cnt = sizeof (_task_list) / sizeof (TaskFunc);   \
+//         for (uint8_t i = 0u; i < _task_cnt; i++) {                           \
+//             RegTask (_task_list[i], Type##_Task##i, size, &g_##Type, level); \
+//         }                                                                    \
+//     } while (0)
 
-//初始化一个Gpio
-#define InitGpio(Periph, GPIO_Pin, GPIO_Speed, GPIO_Mode, v)                   \
-    GpioManager::IoClock (Periph, true);                                       \
-    static GPIO_InitTypeDef def##__LINE__ = {GPIO_Pin, GPIO_Speed, GPIO_Mode}; \
-    GPIO_Init ((GPIO_TypeDef *)Periph, &def##__LINE__);                        \
-    GPIO_WriteBit ((GPIO_TypeDef *)Periph, GPIO_Pin, v ? Bit_SET : Bit_RESET);
+// 初始化一个Gpio
+#define InitGpio(Periph, GPIO_Pin, GPIO_Speed, GPIO_Mode, v)                       \
+    do {                                                                           \
+        GpioManager::IoClock (Periph, true);                                       \
+        static GPIO_InitTypeDef def##__LINE__ = {GPIO_Pin, GPIO_Speed, GPIO_Mode}; \
+        GPIO_Init ((GPIO_TypeDef *)Periph, &def##__LINE__);                        \
+        GPIO_WriteBit ((GPIO_TypeDef *)Periph, GPIO_Pin, v ? Bit_SET : Bit_RESET); \
+    } while (0);

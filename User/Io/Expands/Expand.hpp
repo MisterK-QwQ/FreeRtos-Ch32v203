@@ -32,19 +32,19 @@ struct I2CExpand : public Expand {
 };
 struct ADCExpand:public Expand{
     ADC_InitTypeDef ADC_InitStructure;
-    uint8_t ADC_Channel; 
-    uint32_t IDATAR1;    //充电
-    uint32_t RDATAR; //放电  
-    
-    uint32_t GetRDATAR(){
-        if(Modx == nullptr) return 0;
-        ADC_TypeDef* adc = (ADC_TypeDef*)Modx;
-        ADC_RegularChannelConfig(adc, ADC_Channel, 1, ADC_SampleTime_7Cycles5);
-        adc->IDATAR1 = this->IDATAR1;
-        adc->RDATAR = this->RDATAR;
-        while(!ADC_GetFlagStatus(adc,ADC_FLAG_EOC ));
-        return adc->RDATAR;
-    }
+    //uint8_t ADC_Channel; 
+    // uint32_t IDATAR1;    //充电
+    // uint32_t RDATAR; //放电  
+
+    // uint32_t GetRDATAR(){
+    //     if(Modx == nullptr) return 0;
+    //     ADC_TypeDef* adc = (ADC_TypeDef*)Modx;
+    //     ADC_RegularChannelConfig(adc, ADC_Channel, 1, ADC_SampleTime_7Cycles5);
+    //     adc->IDATAR1 = this->IDATAR1;
+    //     adc->RDATAR = this->RDATAR;
+    //     while(!ADC_GetFlagStatus(adc,ADC_FLAG_EOC ));
+    //     return adc->RDATAR;
+    // }
 
 };
 struct DMAExpand:public Expand{
