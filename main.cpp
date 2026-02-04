@@ -16,5 +16,5 @@ auto main (void) -> int {
     GpioManager::Init();  // ≥ı ºªØ
 
     vTaskStartScheduler();
-    while (1) { printf ("[ERROR] shouldn't run at here!!\n"); }
+    while (1) { printf ("[ERROR] shouldn't run at here!!\r\n"); }
 }

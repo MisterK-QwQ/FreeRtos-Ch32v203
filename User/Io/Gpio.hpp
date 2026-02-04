@@ -3,7 +3,6 @@
 #include "ch32v20x_gpio.h"
 #include "Expands/Expand.hpp"
 
-#define m_onInit false  //手动初始化
 
 typedef void (*GpioInitCallback) (void *);
 
@@ -23,14 +22,14 @@ class Gpio {
     // void AddExpand(Expand m_Expand) {
     //     expand = m_Expand;
     // }
-#if  (m_onInit)
+
     /**
      * @brief 初始化 改变Gpio默认电平 并且调用已注册的函数传入类实列
      */
     auto init() -> void {
         if (initCallback) initCallback (this);
     }
-#endif
+
     /**
      * @brief 注册函数到initCallback
      *

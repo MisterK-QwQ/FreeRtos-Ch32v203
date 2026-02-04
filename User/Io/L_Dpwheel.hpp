@@ -17,14 +17,14 @@ class LDpWheel : public Gpio {
         LDTimData.TIM_OC.TIM_Pulse = 0;
         LDTimData.TIM_OC.TIM_OCPolarity = TIM_OCPolarity_Low;
 
-      //  RegisterFunc (init);
+        RegisterFunc (init);
     }
     
-#if (m_onInit)
+
     static auto init (LDpWheel *_this) -> void {
 
     }
-#endif
+
 
     static auto Task (LDpWheel *_this) -> void {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);

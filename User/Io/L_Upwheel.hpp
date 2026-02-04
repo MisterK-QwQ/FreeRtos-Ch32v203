@@ -17,13 +17,13 @@ class LUpWheel : public Gpio {
         LUTimData.TIM_OC.TIM_Pulse = 0;
         LUTimData.TIM_OC.TIM_OCPolarity = TIM_OCPolarity_Low;
 
-    //    RegisterFunc (init);
+        RegisterFunc (init);
     }
-#if (m_onInit)
+
     static auto init (LUpWheel *_this) -> void {
      
     }
-#endif
+
     static auto Task (LUpWheel *_this) -> void {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3, ENABLE);

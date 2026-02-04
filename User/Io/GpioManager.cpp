@@ -19,7 +19,6 @@ auto GpioManager::IoClock (void *m_Periph, bool v) -> void {
         RCC_APBPeriph = RCC_APB2Periph_GPIOD;
     else if (m_Periph == AFIO)
         RCC_APBPeriph = RCC_APB2Periph_AFIO;
-
     if (RCC_APBPeriph)
         RCC_APB2PeriphClockCmd (RCC_APBPeriph, v ? ENABLE : DISABLE);
 }
@@ -38,9 +37,7 @@ auto GpioManager::Init() -> void {
                     continue;
         IoClock (m_gpio[u]->Periph, true);
         GPIO_Init ((GPIO_TypeDef *)m_gpio[u]->Periph, &m_gpio[u]->def);
-#if (m_onInit)
-        m_gpio[u]->init();  //初始化Gpio
-#endif
+        m_gpio[u]->init();  //初始化注册的Gpio
         m_gpio[u]->initialized = true;
     }
     printf ("[INFO] Gpio Size(%d)\r\n", GpioManager::m_count);
