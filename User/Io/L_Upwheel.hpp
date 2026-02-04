@@ -17,10 +17,14 @@ class LUpWheel : public Gpio {
         LUTimData.TIM_OC.TIM_Pulse = 0;
         LUTimData.TIM_OC.TIM_OCPolarity = TIM_OCPolarity_Low;
 
-        RegisterFunc (init);
+    //    RegisterFunc (init);
     }
-
+#if (m_onInit)
     static auto init (LUpWheel *_this) -> void {
+     
+    }
+#endif
+    static auto Task (LUpWheel *_this) -> void {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3, ENABLE);
 
@@ -29,9 +33,6 @@ class LUpWheel : public Gpio {
         TIM_OC1PreloadConfig (TIM3, TIM_OCPreload_Enable);
         TIM_ARRPreloadConfig (TIM3, ENABLE);
         TIM_Cmd (TIM3, ENABLE);  // Æô¶¯TIM3
-    }
-
-    static auto Task (LUpWheel *_this) -> void {
         while (true) {
             // TIM_SetCompare1 (TIM3, _this->i);
             vTaskDelay (20);

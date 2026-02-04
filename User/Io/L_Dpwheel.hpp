@@ -17,10 +17,16 @@ class LDpWheel : public Gpio {
         LDTimData.TIM_OC.TIM_Pulse = 0;
         LDTimData.TIM_OC.TIM_OCPolarity = TIM_OCPolarity_Low;
 
-        RegisterFunc (init);
+      //  RegisterFunc (init);
     }
-
+    
+#if (m_onInit)
     static auto init (LDpWheel *_this) -> void {
+
+    }
+#endif
+
+    static auto Task (LDpWheel *_this) -> void {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3, ENABLE);
 
@@ -29,9 +35,7 @@ class LDpWheel : public Gpio {
         TIM_OC3PreloadConfig (TIM3, TIM_OCPreload_Enable);
         TIM_ARRPreloadConfig (TIM3, ENABLE);
         TIM_Cmd (TIM3, ENABLE);  // Æô¶¯TIM3
-    }
 
-    static auto Task (LDpWheel *_this) -> void {
         while (true) {
             // TIM_SetCompare3 (TIM3, _this->i);
             vTaskDelay (20);

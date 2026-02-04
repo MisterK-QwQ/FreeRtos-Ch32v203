@@ -15,14 +15,12 @@ struct Vec {
 
     union {
         T data[N];
-
         struct {
             T x [[maybe_unused]];
             T y [[maybe_unused]];
             T z [[maybe_unused]];
             T w [[maybe_unused]];
         };
-
         struct {
             T r [[maybe_unused]];
             T g [[maybe_unused]];

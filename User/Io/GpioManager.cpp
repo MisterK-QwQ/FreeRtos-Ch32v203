@@ -28,6 +28,7 @@ auto GpioManager::Init() -> void {
     InitGpio (GPIOB, GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_Out_PP, true);  // 触摸需要
     TRegGpio (TouchKey, 256,5, TouchKey::Task);                             // 触摸案列
     TRegGpio (LED, 256, 5, LED::Task);                                       // 闪烁案列
+    
     // TRegGpio (LUpWheel, 256, 5, LUpWheel::Task);  // 前左轮
     // TRegGpio(LDpWheel,128,5， LDpWheel::Task);  //后左轮
     // TRegGpio(RDpWheel,128,5,RDpWheel::Task);  //后右轮
@@ -37,7 +38,9 @@ auto GpioManager::Init() -> void {
                     continue;
         IoClock (m_gpio[u]->Periph, true);
         GPIO_Init ((GPIO_TypeDef *)m_gpio[u]->Periph, &m_gpio[u]->def);
-        m_gpio[u]->init();
+#if (m_onInit)
+        m_gpio[u]->init();  //初始化Gpio
+#endif
         m_gpio[u]->initialized = true;
     }
     printf ("[INFO] Gpio Size(%d)\r\n", GpioManager::m_count);

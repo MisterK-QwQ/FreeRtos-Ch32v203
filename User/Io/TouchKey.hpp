@@ -16,10 +16,12 @@ class TouchKey : public Gpio {
         AdcData.ADC_InitStructure.ADC_NbrOfChannel = 1;
       //  RegisterFunc (oninit);
     };
-    
-    // inline static auto oninit (TouchKey *_this) -> void {
 
-    // };
+#if (m_onInit)
+    inline static auto oninit (TouchKey *_this) -> void {
+
+    };
+#endif
 
     inline static auto Task (TouchKey *_this) -> void {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_ADC1, ENABLE);
