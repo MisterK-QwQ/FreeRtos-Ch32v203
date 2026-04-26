@@ -15,17 +15,19 @@ struct Vec {
 
     union {
         T data[N];
+
         struct {
-            T x [[maybe_unused]];
-            T y [[maybe_unused]];
-            T z [[maybe_unused]];
-            T w [[maybe_unused]];
+            T x;
+            T y;
+            T z;
+            T w;
         };
+
         struct {
-            T r [[maybe_unused]];
-            T g [[maybe_unused]];
-            T b [[maybe_unused]];
-            T a [[maybe_unused]];
+            T r;
+            T g;
+            T b;
+            T a;
         };
     };
 

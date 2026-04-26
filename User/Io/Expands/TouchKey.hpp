@@ -1,7 +1,12 @@
 #pragma once
-#include "GpioManager.hpp"
+#include "../GpioManager.hpp"
 #include "LED.hpp"
 #include "Utils/utils.hpp"
+
+namespace {
+constexpr uint16_t kTouchKeyThreshold = 4050;
+}
+
 class TouchKey : public Gpio {
   public:
     ADCExpand AdcData;
@@ -17,26 +22,27 @@ class TouchKey : public Gpio {
         RegisterFunc (oninit);
     };
 
-    inline static auto oninit (TouchKey *_this) -> void {
+    static void oninit (TouchKey *_this) {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_ADC1, ENABLE);
         RCC_ADCCLKConfig (RCC_PCLK2_Div8);
         ADC_Init (ADC1, &_this->AdcData.ADC_InitStructure);
         ADC_Cmd (ADC1, ENABLE);
         TKey1->CTLR1 |= (1<<26)|(1<<24);        
-        ADC1->IDATAR1 = 0x20;  //³äµç
+        ADC1->IDATAR1 = 0x20;  //ï¿½ï¿½ï¿½
     };
 
-    inline static auto Task (TouchKey *_this) -> void {
+    static void Task (TouchKey *_this)  {
         while (true) {
-            if (GpioManager::Get<LED>(1)->Led) {   //°¸ÁÐ
+            if (GpioManager::Get<LED>(2)->Led) {   //ï¿½ï¿½ï¿½ï¿½
                 ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_7Cycles5);
-                ADC1->RDATAR = 0x10;    //·Åµç
+                ADC1->RDATAR = 0x10;    //ï¿½Åµï¿½
                 while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC));
                 uint16_t currentAdcValue =ADC1->RDATAR;//Utils::adc_filter_exponential(ADC1->RDATAR);
-                GPIO_WriteBit (GPIOB, GPIO_Pin_1, currentAdcValue >= 4050 ? Bit_SET : Bit_RESET);
-                printf("currentAdcValue%d\n\r",currentAdcValue);
+                GPIO_WriteBit (GPIOB, GPIO_Pin_1, currentAdcValue >= kTouchKeyThreshold ? Bit_SET : Bit_RESET);
             } else
                 GPIO_WriteBit (GPIOB, GPIO_Pin_1, Bit_SET);
+            vTaskDelay(pdMS_TO_TICKS(1));
         }
     }
 };
+

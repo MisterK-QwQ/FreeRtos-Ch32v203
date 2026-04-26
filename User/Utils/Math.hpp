@@ -125,7 +125,7 @@ FORCE_INLINE T tan (const T &rad) noexcept {
     return std::tan (rad);
 }
 
-// 嵌入式无FPU快速三角函数（泰勒展开版，速度快/精度足够，适配弧度，建议无FPU时使用）
+
 template <typename T = float>
 FORCE_INLINE T fast_sin (const T &rad) noexcept {
     static_assert (std::is_floating_point_v<T>);

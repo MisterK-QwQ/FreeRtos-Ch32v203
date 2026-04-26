@@ -2,52 +2,57 @@
 #include <array>
 #include "ch32v20x.h"
 #include "Gpio.hpp"
-#define MAX_GPIO_PINS 4
+
+constexpr int MAX_GPIO_PINS = 8;
 
 namespace GpioManager {
     static int m_count = 0u;
     static std::array<Gpio *, MAX_GPIO_PINS> m_gpio = {nullptr};
     // static Gpio *m_gpio[MAX_GPIO_PINS];
-
     auto Init() -> void;
-    auto IoClock (void *m_Periph, bool v) -> void;
+    auto IoClock (GPIO_TypeDef *m_Periph, bool v) -> void;
     auto AddGpio (Gpio *m_Gpio) -> void;
 
     //  void AddGpio (void *m_Periph, GPIO_InitTypeDef m_def, bool defv = false);
 
     /**
-    * @brief »ñÈ¡ÀàÊµÁÐ
-    *
-    * @tparam T ±ØÐëÎªGpioµÄ×ÓÀà·ñÔò»á³öÏÖ¿ÕµØÖ·
-    * @param idx GpioÐòºÅ
+    * @brief ï¿½ï¿½È¡ï¿½ï¿½Êµï¿½ï¿½
+    * @tparam T ï¿½ï¿½ï¿½ï¿½ÎªGpioï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿Õµï¿½Ö·
+    * @param idx Gpioï¿½ï¿½ï¿½
     */
     template <typename T>
     [[nodiscard]] auto Get (uint16_t idx) -> T * {
-        return (idx < m_count && m_gpio[idx] != nullptr) ? static_cast<T *> (m_gpio[idx]) : nullptr;
+        if (idx < m_count && m_gpio[idx] != nullptr) {
+            return static_cast<T*>(m_gpio[idx]);
+        }
+        return nullptr;
+     //   return (idx < m_count && m_gpio[idx] != nullptr) ? static_cast<T *> (m_gpio[idx]) : nullptr;
     }
 };  // namespace GpioManager
 
-// ×¢²áÒ»¸öÈÎÎñ
+// ×¢ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define RegTask(Fun, Name, size, pragma, level) \
     TaskHandle_t Task_Handler##Name = nullptr;  \
-    xTaskCreate ((TaskFunction_t)Fun,           \
-                 (const char *)#Name,           \
-                 (uint16_t)size,                \
-                 (void *)pragma,                \
-                 (UBaseType_t)level,            \
-                 (TaskHandle_t *)&Task_Handler##Name);
+    ASSERT (xTaskCreate ((TaskFunction_t)Fun,   \
+                         (const char *)#Name,   \
+                         (uint16_t)size,        \
+                         (void *)pragma,        \
+                         (UBaseType_t)level,    \
+                         (TaskHandle_t *)&Task_Handler##Name) == pdPASS, \
+            "task create failed: %s",           \
+            #Name);
 
-// ×¢²áÒ»¸öGpio
+// ×¢ï¿½ï¿½Ò»ï¿½ï¿½Gpio
 #define RegGpio(Type)     \
     static Type g_##Type; \
     GpioManager::AddGpio (&g_##Type);
 
-// ×¢²áÒ»¸öÓÐÈÎÎñµÄGpio
+// ×¢ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Gpio
 #define TRegGpio(Type, size, level, Fun) \
     RegGpio (Type);                      \
     RegTask (Fun, Type, size, &g_##Type, level);
 
-// ×¢²áÒ»¸öÓÐ¶à¸öÈÎÎñµÄGpio   ÒÑ¾­·ÏÆú  ÇëÊ¹ÓÃRegTaskµ¥¶À×¢²á
+// ×¢ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Gpio   ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½Ê¹ï¿½ï¿½RegTaskï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
 // #define M_TRegGpio(Type, size, level, ...)                                   \
 //     do {                                                                     \
 //         using TaskFunc = void (*) (Type *);                                  \
@@ -59,7 +64,8 @@ namespace GpioManager {
 //         }                                                                    \
 //     } while (0)
 
-// ³õÊ¼»¯Ò»¸öGpio
+// ï¿½ï¿½Ê¼ï¿½ï¿½Ò»ï¿½ï¿½Gpio   
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½Ð½ï¿½ï¿½Ð³ï¿½Ê¼ï¿½ï¿½
 #define InitGpio(Periph, GPIO_Pin, GPIO_Speed, GPIO_Mode, v)                       \
     do {                                                                           \
         GpioManager::IoClock (Periph, true);                                       \
@@ -67,3 +73,4 @@ namespace GpioManager {
         GPIO_Init ((GPIO_TypeDef *)Periph, &def##__LINE__);                        \
         GPIO_WriteBit ((GPIO_TypeDef *)Periph, GPIO_Pin, v ? Bit_SET : Bit_RESET); \
     } while (0);
+

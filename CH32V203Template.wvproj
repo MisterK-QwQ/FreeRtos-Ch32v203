@@ -21,6 +21,11 @@
 				"parentLogicPath": "",
 				"type": "file",
 				"name": "*.wvproj"
+			},
+			{
+				"name": "IWDG.hpp",
+				"parentLogicPath": "User",
+				"type": "file"
 			}
 		],
 		"projectName": "CH32V203Template",

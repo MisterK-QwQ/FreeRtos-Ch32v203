@@ -3,7 +3,7 @@
 #include "task.h"
 #include "stdio.h"
 
-enum class ExpandType{
+enum class ExpandType:uint8_t {
     None,
     TIM,
     SPI,

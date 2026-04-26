@@ -2,21 +2,18 @@
 #include "ch32v20x.h"
 #include "ch32v20x_gpio.h"
 #include "Expands/Expand.hpp"
-
-
-typedef void (*GpioInitCallback) (void *);
-
+typedef void (*GpioInitCallback)(void*);
 class Gpio {
   public:
     GpioInitCallback initCallback = nullptr;
     // Expand expand = {nullptr};
     bool initialized = false;
-    void *Periph = {nullptr};
+    GPIO_TypeDef *Periph = {nullptr};
     GPIO_InitTypeDef def = {0};
     Gpio() = default;
     Gpio(const Gpio&)=default;
     Gpio& operator=(const Gpio&) = delete;
-    Gpio (void *m_Periph, GPIO_InitTypeDef m_def)
+    Gpio (GPIO_TypeDef *m_Periph, GPIO_InitTypeDef m_def)
         : Periph (m_Periph), def (m_def){};
 
     // void AddExpand(Expand m_Expand) {
@@ -26,7 +23,7 @@ class Gpio {
     /**
      * @brief 初始化 改变Gpio默认电平 并且调用已注册的函数传入类实列
      */
-    auto init() -> void {
+    void init() {
         if (initCallback) initCallback (this);
     }
 
@@ -37,7 +34,7 @@ class Gpio {
      * @param Func
      */
     template <typename T>
-    auto RegisterFunc (void (*Func) (T *)) -> void {
+    void RegisterFunc (void (*Func) (T *)) {
         initCallback = (GpioInitCallback)Func;
     }
 };

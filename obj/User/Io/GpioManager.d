@@ -36,12 +36,13 @@ User/Io/GpioManager.o: ../User/Io/GpioManager.cpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/mpu_wrappers.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/task.h \
  d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/list.h \
- ../User/Io/TouchKey.hpp ../User/Io/LED.hpp \
+ ../User/Io/Expands/TouchKey.hpp ../User/Io/Expands/LED.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/utils.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/Math.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/Vector.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/TimerUtil.hpp \
- ../User/Io/R_Upwheel.hpp ../User/Io/L_Upwheel.hpp
+ ../User/Io/Expands/R_Upwheel.hpp ../User/Io/Expands/L_Upwheel.hpp \
+ ../User/Io/Expands/Wwdg.hpp
 
 ../User/Io/GpioManager.hpp:
 
@@ -119,9 +120,9 @@ d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/task.h:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/FreeRTOS/include/list.h:
 
-../User/Io/TouchKey.hpp:
+../User/Io/Expands/TouchKey.hpp:
 
-../User/Io/LED.hpp:
+../User/Io/Expands/LED.hpp:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/utils.hpp:
 
@@ -131,6 +132,8 @@ d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/Vector.hpp:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/TimerUtil.hpp:
 
-../User/Io/R_Upwheel.hpp:
+../User/Io/Expands/R_Upwheel.hpp:
 
-../User/Io/L_Upwheel.hpp:
+../User/Io/Expands/L_Upwheel.hpp:
+
+../User/Io/Expands/Wwdg.hpp:

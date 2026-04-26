@@ -1,6 +1,6 @@
 #pragma once
-#include "Gpio.hpp"
-#include "Expands/Expand.hpp"
+#include "../Gpio.hpp"
+#include "Expand.hpp"
 
 class LDpWheel : public Gpio {
   public:
@@ -21,12 +21,12 @@ class LDpWheel : public Gpio {
     }
     
 
-    static auto init (LDpWheel *_this) -> void {
+    static void init (LDpWheel *_this) {
 
     }
 
 
-    static auto Task (LDpWheel *_this) -> void {
+    static void Task (LDpWheel *_this) {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3, ENABLE);
 

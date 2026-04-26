@@ -1,50 +1,51 @@
 #include "GpioManager.hpp"
-#include "TouchKey.hpp"
-#include "LED.hpp"
-#include "R_Upwheel.hpp"
-#include "L_Upwheel.hpp"
-
+#include "Expands/TouchKey.hpp"
+#include "Expands/LED.hpp"
+#include "Expands/R_Upwheel.hpp"
+#include "Expands/L_Upwheel.hpp"
+#include "Expands/Wwdg.hpp"
 // #include "R_Dpwheel.hpp"
 // #include "L_Dpwheel.hpp"
 
-auto GpioManager::IoClock (void *m_Periph, bool v) -> void {
-    uint32_t RCC_APBPeriph = 0;
-    if (m_Periph == GPIOA)
-        RCC_APBPeriph = RCC_APB2Periph_GPIOA;
-    else if (m_Periph == GPIOB)
-        RCC_APBPeriph = RCC_APB2Periph_GPIOB;
-    else if (m_Periph == GPIOC)
-        RCC_APBPeriph = RCC_APB2Periph_GPIOC;
-    else if (m_Periph == GPIOD)
-        RCC_APBPeriph = RCC_APB2Periph_GPIOD;
-    else if (m_Periph == AFIO)
-        RCC_APBPeriph = RCC_APB2Periph_AFIO;
-    if (RCC_APBPeriph)
-        RCC_APB2PeriphClockCmd (RCC_APBPeriph, v ? ENABLE : DISABLE);
+namespace {
+constexpr uint16_t kDefaultTaskStack = 256;
+constexpr UBaseType_t kWwdgTaskPriority = 7;
+constexpr UBaseType_t kTouchKeyTaskPriority = 5;
+constexpr UBaseType_t kLedTaskPriority = 7;
+}
+
+auto GpioManager::IoClock (GPIO_TypeDef *m_Periph, bool v) -> void {
+    if (m_Periph == nullptr) return;
+    FunctionalState cmd = v ? ENABLE : DISABLE;
+    if (m_Periph == GPIOA) RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, cmd);
+    else if (m_Periph == GPIOB) RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, cmd);
+    else if (m_Periph == GPIOC) RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, cmd);
+    else if (m_Periph == GPIOD) RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, cmd);
+    else if ((AFIO_TypeDef*)m_Periph == AFIO) RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, cmd);
 }
 
 auto GpioManager::Init() -> void {
-    InitGpio (GPIOB, GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_Out_PP, true);  // ´¥ÃþÐèÒª
-    TRegGpio (TouchKey, 256,5, TouchKey::Task);                             // ´¥Ãþ°¸ÁÐ
-    TRegGpio (LED, 256, 5, LED::Task);                                       // ÉÁË¸°¸ÁÐ
-    
-    // TRegGpio (LUpWheel, 256, 5, LUpWheel::Task);  // Ç°×óÂÖ
-    // TRegGpio(LDpWheel,128,5£¬ LDpWheel::Task);  //ºó×óÂÖ
-    // TRegGpio(RDpWheel,128,5,RDpWheel::Task);  //ºóÓÒÂÖ
+    InitGpio (GPIOB, GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_Out_PP, true);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª
+ 
+    TRegGpio (Wwdg, kDefaultTaskStack, kWwdgTaskPriority, Wwdg::Task);
+    TRegGpio (TouchKey, kDefaultTaskStack, kTouchKeyTaskPriority, TouchKey::Task);
+    TRegGpio (LED, kDefaultTaskStack, kLedTaskPriority, LED::Task);
+    // TRegGpio (LUpWheel, 256, 5, LUpWheel::Task);  // Ç°ï¿½ï¿½ï¿½ï¿½
+    // TRegGpio(LDpWheel,128,5ï¿½ï¿½ LDpWheel::Task);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // TRegGpio(RDpWheel,128,5,RDpWheel::Task);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    for (int u = 0u; u < m_count; u++) { 
-         if (m_gpio[u]->initialized)
-                    continue;
+    for (uint8_t  u = 0u; u < m_count; u++) { 
+         if (m_gpio[u] == nullptr || m_gpio[u]->initialized) continue;
         IoClock (m_gpio[u]->Periph, true);
-        GPIO_Init ((GPIO_TypeDef *)m_gpio[u]->Periph, &m_gpio[u]->def);
-        m_gpio[u]->init();  //³õÊ¼»¯×¢²áµÄGpio
+        GPIO_Init (m_gpio[u]->Periph, &m_gpio[u]->def);
+        m_gpio[u]->init();  //ï¿½ï¿½Ê¼ï¿½ï¿½×¢ï¿½ï¿½ï¿½Gpio
         m_gpio[u]->initialized = true;
     }
     printf ("[INFO] Gpio Size(%d)\r\n", GpioManager::m_count);
 }
 
 auto GpioManager::AddGpio (Gpio *m_Gpio) -> void {
-    ASSERT (m_count < MAX_GPIO_PINS, "×¢²áµÄGpio´óÓÚm_gpioÊý×é´óÐ¡.");
+    ASSERT (m_count < MAX_GPIO_PINS, "×¢ï¿½ï¿½ï¿½Gpioï¿½ï¿½ï¿½ï¿½m_gpioï¿½ï¿½ï¿½ï¿½ï¿½Ð¡.");
     m_gpio[m_count] = m_Gpio;
     m_count++;
 }
@@ -52,3 +53,4 @@ auto GpioManager::AddGpio (Gpio *m_Gpio) -> void {
 // void GpioManager::AddGpio(void *m_Periph, GPIO_InitTypeDef m_def, bool defv) {
 //     AddGpio(Gpio(m_Periph, m_def, defv));
 // }
+

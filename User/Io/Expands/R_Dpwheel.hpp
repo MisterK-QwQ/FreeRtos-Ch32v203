@@ -1,6 +1,6 @@
 #pragma once
-#include "Gpio.hpp"
-#include "Expands/Expand.hpp"
+#include "../Gpio.hpp"
+#include "Expand.hpp"
 
 class RDpWheel : public Gpio {
   public:
@@ -20,7 +20,7 @@ class RDpWheel : public Gpio {
         RegisterFunc (init);
     }
 
-    static auto init (RDpWheel *_this) -> void {
+    static void init (RDpWheel *_this) {
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB1PeriphClockCmd (RCC_APB1Periph_TIM3, ENABLE);
 
@@ -31,7 +31,7 @@ class RDpWheel : public Gpio {
         TIM_Cmd (TIM3, ENABLE);
     }
 
-    static auto Task (RDpWheel *_this) -> void {
+    static void Task (RDpWheel *_this) {
 
         while (true) {
             // TIM_SetCompare4 (TIM3, _this->i);
