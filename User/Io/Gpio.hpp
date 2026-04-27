@@ -3,6 +3,7 @@
 #include "ch32v20x_gpio.h"
 #include "Expands/Expand.hpp"
 typedef void (*GpioInitCallback)(void*);
+
 class Gpio {
   public:
     GpioInitCallback initCallback = nullptr;

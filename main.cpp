@@ -4,32 +4,36 @@
 #include "semphr.h"
 #include "Io/GpioManager.hpp"
 
-namespace {
-void PrintBootBanner() {
-    printf ("SystemClk:%d\r\n", SystemCoreClock);
-    printf ("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
-    printf ("FreeRTOS Kernel Version:%s\r\n", tskKERNEL_VERSION_NUMBER);
-}
-}
+
 
 int main (void) {
     NVIC_PriorityGroupConfig (NVIC_PriorityGroup_1);
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init (115200);
-    PrintBootBanner();
+    
+    printf ("SystemClk:%d\r\n", SystemCoreClock);
+    printf ("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
+    printf ("FreeRTOS Kernel Version:%s\r\n", tskKERNEL_VERSION_NUMBER);
 
-    GpioManager::Init();  // ï¿½ï¿½Ê¼ï¿½ï¿½
+    GpioManager::Init(); //³õÊ¼»¯¹¦ÄÜ
 
     vTaskStartScheduler();
     printf ("[ERROR] scheduler start failed\r\n");
     while (1) {}
 }
 
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
-{
-    taskDISABLE_INTERRUPTS(); // ï¿½Ø±ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½?
-    printf("[FATAL] Õ»ï¿½ï¿½ï¿½ï¿½ï¿½Task: %s\r\n", pcTaskName);
-    while(1);
+extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    printf("Fatal Error: Stack Overflow in task: %s\r\n", pcTaskName);
+    __disable_irq();
+    while(1) {
+    }
+}
+
+extern "C" void vApplicationMallocFailedHook(void) {
+    printf("Fatal Error: FreeRTOS Malloc Failed!\r\n");
+    __disable_irq(); 
+    while(1) {
+    }
 }
 

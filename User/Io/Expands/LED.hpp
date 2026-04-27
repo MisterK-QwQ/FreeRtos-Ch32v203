@@ -12,6 +12,7 @@ public:
     bool Led = false;
     LED():Gpio(GPIOB,{GPIO_Pin_0,GPIO_Speed_50MHz,GPIO_Mode_Out_PP}){
     }
+    
     inline static void Task(LED* _this) {
       TickType_t lastWakeTime = xTaskGetTickCount();
       while (true) {

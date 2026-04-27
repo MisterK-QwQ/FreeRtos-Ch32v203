@@ -3,6 +3,7 @@
 #include "LED.hpp"
 #include "Utils/utils.hpp"
 
+
 namespace {
 constexpr uint16_t kTouchKeyThreshold = 4050;
 }
@@ -10,6 +11,8 @@ constexpr uint16_t kTouchKeyThreshold = 4050;
 class TouchKey : public Gpio {
   public:
     ADCExpand AdcData;
+    //TaskHandle_t xTouchTaskHandle = NULL;
+
 
     TouchKey() : Gpio (GPIOA, {GPIO_Pin_1, (GPIOSpeed_TypeDef)0, GPIO_Mode_AIN}) {
         AdcData.Modx = ADC1;
@@ -23,19 +26,28 @@ class TouchKey : public Gpio {
     };
 
     static void oninit (TouchKey *_this) {
+        ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
         RCC_APB2PeriphClockCmd (RCC_APB2Periph_ADC1, ENABLE);
         RCC_ADCCLKConfig (RCC_PCLK2_Div8);
         ADC_Init (ADC1, &_this->AdcData.ADC_InitStructure);
         ADC_Cmd (ADC1, ENABLE);
+
+        NVIC_InitTypeDef NVIC_InitStructure = {};
+        NVIC_InitStructure.NVIC_IRQChannel = ADC1_2_IRQn;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5; 
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+        NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+        NVIC_Init(&NVIC_InitStructure);
+
         TKey1->CTLR1 |= (1<<26)|(1<<24);        
-        ADC1->IDATAR1 = 0x20;  //���
+        ADC1->IDATAR1 = 0x20; 
     };
 
     static void Task (TouchKey *_this)  {
         while (true) {
-            if (GpioManager::Get<LED>(2)->Led) {   //����
+            if (GpioManager::Get<LED>(GPIOB,GPIO_Pin_0)->Led) {   
                 ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_7Cycles5);
-                ADC1->RDATAR = 0x10;    //�ŵ�
+                ADC1->RDATAR = 0x10; 
                 while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC));
                 uint16_t currentAdcValue =ADC1->RDATAR;//Utils::adc_filter_exponential(ADC1->RDATAR);
                 GPIO_WriteBit (GPIOB, GPIO_Pin_1, currentAdcValue >= kTouchKeyThreshold ? Bit_SET : Bit_RESET);

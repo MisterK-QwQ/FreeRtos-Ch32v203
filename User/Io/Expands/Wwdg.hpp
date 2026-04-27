@@ -17,7 +17,7 @@ class Wwdg : public Gpio {
 
     Wwdg() : Gpio() {
         NVIC_InitStructure.NVIC_IRQChannel = WWDG_IRQn;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  // �����ռ���ȼ�
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
         NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
         NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
         RegisterFunc (oninit);

@@ -1,5 +1,5 @@
 ################################################################################
-# MRS Version: 2.3.0
+# MRS Version: 2.4.0
 # Automatically-generated file. Do not edit!
 ################################################################################
 -include ../makefile.init
@@ -75,7 +75,7 @@ main-build: CH32V203Template.elf secondary-outputs
 
 # Tool invocations
 CH32V203Template.elf: $(OBJS) $(USER_OBJS_ESCAPE)
-	@	riscv-none-embed-g++ -march=rv32imacxw -mabi=ilp32 -msmall-data-limit=8 -msave-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -Wunused -g -T "d:/ÎÄµµ/MounRiver/FreeRtos-Ch32v203/Ld/Link.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"CH32V203Template.map" --specs=nano.specs --specs=nosys.specs -o "CH32V203Template.elf" $(OBJS) $(LIBS)
+	@	riscv-none-embed-g++ -march=rv32imacxw -mabi=ilp32 -msmall-data-limit=8 -msave-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -Wunused -g -T "d:\ÎÄµµ\MounRiver\FreeRtos-Ch32v203\Ld\Link.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"CH32V203Template.map" --specs=nano.specs --specs=nosys.specs -o "CH32V203Template.elf" $(OBJS) $(LIBS)
 CH32V203Template.hex: CH32V203Template.elf
 	@	riscv-none-embed-objcopy -O ihex "CH32V203Template.elf" "CH32V203Template.hex"
 CH32V203Template.lst: CH32V203Template.elf

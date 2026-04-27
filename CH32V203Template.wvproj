@@ -23,9 +23,9 @@
 				"name": "*.wvproj"
 			},
 			{
-				"name": "IWDG.hpp",
 				"parentLogicPath": "User",
-				"type": "file"
+				"type": "file",
+				"name": "IWDG.hpp"
 			}
 		],
 		"projectName": "CH32V203Template",
@@ -213,10 +213,10 @@
 					"optimization": {
 						"cpp_language_standard": "cpp17",
 						"abi_version": "0",
-						"do_not_use_exceptions": false,
+						"do_not_use_exceptions": true,
 						"do_not_use_rtti": true,
 						"do_not_use__cxa_atexit": false,
-						"do_not_use_thread_safe_statics": false,
+						"do_not_use_thread_safe_statics": true,
 						"other_optimization_flags": ""
 					},
 					"warnings": {
