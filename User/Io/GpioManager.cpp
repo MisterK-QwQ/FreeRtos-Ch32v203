@@ -1,9 +1,10 @@
 #include "GpioManager.hpp"
 #include "Expands/TouchKey.hpp"
 #include "Expands/LED.hpp"
-#include "Expands/R_Upwheel.hpp"
-#include "Expands/L_Upwheel.hpp"
+// #include "Expands/R_Upwheel.hpp"
+// #include "Expands/L_Upwheel.hpp"
 #include "Expands/Wwdg.hpp"
+#include "Expands/ST7789.hpp"
 // #include "R_Dpwheel.hpp"
 // #include "L_Dpwheel.hpp"
 
@@ -18,19 +19,22 @@ auto GpioManager::IoClock (GPIO_TypeDef *m_Periph, bool v) -> void {
 }
 
 auto GpioManager::Init() -> void {
-    InitGpio (GPIOB, GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_Out_PP, true);  
+    //InitGpio (GPIOB, GPIO_Pin_1, GPIO_Speed_50MHz, GPIO_Mode_Out_PP, true);  
  
     TRegGpio (Wwdg, 256, 7, Wwdg::Task);
-    TRegGpio (TouchKey, 256, 5, TouchKey::Task);
-    TRegGpio (LED, 256, 7, LED::Task);
-    
+    TRegGpio (ST7789, 256, 7, ST7789::Task);
+    // TRegGpio (TouchKey, 256, 5, TouchKey::Task);
+    // TRegGpio (LED, 256, 7, LED::Task);
+
+
+
     // TRegGpio (LUpWheel, 256, 5, LUpWheel::Task); 
     // TRegGpio(LDpWheel,128,5ï¿½ï¿½ LDpWheel::Task); 
     // TRegGpio(RDpWheel,128,5,RDpWheel::Task); 
 
     
     
-    for (uint8_t  u = 0u; u < m_count; u++) { 
+    for (uint8_t  u = 0u; u < m_count; u++) {   //³õÊ¼»¯
          if (m_gpio[u] == nullptr || m_gpio[u]->initialized) continue;
         IoClock (m_gpio[u]->Periph, true);
         GPIO_Init (m_gpio[u]->Periph, &m_gpio[u]->def);

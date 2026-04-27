@@ -1,5 +1,6 @@
 {
 	"version": "1.0",
+	"hasAllParsed": true,
 	"isNormalMRSProject": true,
 	"basic": {
 		"chipInfo": {
@@ -26,6 +27,26 @@
 				"parentLogicPath": "User",
 				"type": "file",
 				"name": "IWDG.hpp"
+			},
+			{
+				"name": "L_Dpwheel.hpp",
+				"parentLogicPath": "User/Io/Expands",
+				"type": "file"
+			},
+			{
+				"name": "L_Upwheel.hpp",
+				"parentLogicPath": "User/Io/Expands",
+				"type": "file"
+			},
+			{
+				"name": "R_Dpwheel.hpp",
+				"parentLogicPath": "User/Io/Expands",
+				"type": "file"
+			},
+			{
+				"name": "R_Upwheel.hpp",
+				"parentLogicPath": "User/Io/Expands",
+				"type": "file"
 			}
 		],
 		"projectName": "CH32V203Template",
@@ -82,6 +103,7 @@
 					"code_generation_without_hardware_floating": false,
 					"use_pipelines": false,
 					"show_caret_indicating_the_column": false,
+					"calling_convention_variant": false,
 					"other_optimization_flags": ""
 				},
 				"warnings": {
@@ -305,7 +327,8 @@
 					}
 				},
 				"archiver": {
-					"archiver_flags": "-r"
+					"archiver_flags": "-r",
+					"libOutputPrefix": "lib"
 				},
 				"createFlash": {
 					"enabled": true,
@@ -346,6 +369,7 @@
 					"extra_compressed_extension": true,
 					"bit_extension": false,
 					"multiplication_subset_of_the_M_extension": false,
+					"vector_cryptography_extensions": "",
 					"integer_ABI": "ilp32",
 					"floating_point_ABI": "none",
 					"tuning": "default",

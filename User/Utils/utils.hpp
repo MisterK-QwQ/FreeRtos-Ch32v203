@@ -16,13 +16,7 @@
 namespace Utils {
 
 /**
- * @brief ÒÆ¶¯Æ½¾ùÂË²¨£¨»¬¶¯Æ½¾ù£©
- * @details »ùÓÚ¹Ì¶¨³¤¶È»º´æµÄ»¬¶¯´°¿Ú£¬¼ÆËãÆ½¾ùÖµ£¬Æ½»¬Ëæ»úÔëÉù£¬ÊÊºÏ»ºÂı±ä»¯µÄADCÊı¾İ
- * @tparam T Êı¾İÀàĞÍ£¬Ä¬ÈÏuint16_t£¨ÊÊÅä12Î»ADC£©
- * @tparam cache_size »º´æ³¤¶È£¬Ä¬ÈÏ8£¨½¨ÒéÉèÎª2µÄÃİ´Î£¬³ı·¨¿ÉÓÅ»¯ÎªÒÆÎ»£©
- * @param new_val ±¾´ÎADC²ÉÑùµÄÔ­Ê¼Öµ
- * @return T ÂË²¨ºóµÄÆ½¾ùÖµ
- * @note »º´æ³¤¶ÈÔ½´ó£¬Æ½»¬Ğ§¹ûÔ½ºÃ£¬µ«¶¯Ì¬ÏìÓ¦Ô½Âı£»»º´æÎª¾²Ì¬±äÁ¿£¬Ê×´Îµ÷ÓÃ³õÊ¼»¯Îª0
+ * @brief ç§»åŠ¨å¹³å‡æ»¤æ³¢ï¼Œé™ä½æŠ–åŠ¨
  */
 template <typename T = uint16_t, size_t cache_size = 8>
 FORCE_INLINE T adc_filter_moving_average (T new_val) noexcept {
@@ -38,13 +32,7 @@ FORCE_INLINE T adc_filter_moving_average (T new_val) noexcept {
 }
 
 /**
- * @brief ÖĞÖµÂË²¨
- * @details »ùÓÚÆæÊı³¤¶È»º´æ£¬ÅÅĞòºóÈ¡ÖĞ¼äÖµ£¬ÓĞĞ§ÂË³ı¼â·åÂö³å¸ÉÈÅ£¨Èçµç´Å¸ÉÈÅµ¼ÖÂµÄADCÌø±ä£©
- * @tparam T Êı¾İÀàĞÍ£¬Ä¬ÈÏuint16_t£¨ÊÊÅä12Î»ADC£©
- * @tparam cache_size »º´æ³¤¶È£¬Ä¬ÈÏ3£¨±ØĞëÎªÆæÊı£¬·ñÔò±àÒë±¨´í£©
- * @param new_val ±¾´ÎADC²ÉÑùµÄÔ­Ê¼Öµ
- * @return T ÂË²¨ºóµÄÖĞÖµ
- * @note »º´æ³¤¶ÈÔ½´ó£¬¿¹¼â·åÄÜÁ¦Ô½Ç¿£¬µ«¼ÆËãÁ¿ÂÔÔö£»²ÉÓÃÃ°ÅİÅÅĞò£¬ÊÊºÏĞ¡»º´æ³¡¾°
+ * @brief ä¸­å€¼æ»¤æ³¢
  */
 template <typename T = uint16_t, size_t cache_size = 3>
 FORCE_INLINE T adc_filter_median (T new_val) noexcept {
@@ -69,33 +57,17 @@ FORCE_INLINE T adc_filter_median (T new_val) noexcept {
 }
 
 /**
- * @brief ÖĞÖµ+ÒÆ¶¯Æ½¾ù¸´ºÏÂË²¨
- * @details ÏÈÍ¨¹ıÖĞÖµÂË²¨ÂË³ı¼â·å¸ÉÈÅ£¬ÔÙÍ¨¹ıÒÆ¶¯Æ½¾ùÂË²¨Æ½»¬Ëæ»úÔëÉù£¬¼æ¹Ë¿¹¸ÉÈÅºÍÆ½»¬ĞÔ
- * @tparam T Êı¾İÀàĞÍ£¬Ä¬ÈÏuint16_t£¨ÊÊÅä12Î»ADC£©
- * @tparam median_size ÖĞÖµÂË²¨»º´æ³¤¶È£¬Ä¬ÈÏ3£¨±ØĞëÎªÆæÊı£©
- * @tparam avg_size ÒÆ¶¯Æ½¾ùÂË²¨»º´æ³¤¶È£¬Ä¬ÈÏ8£¨½¨ÒéÉèÎª2µÄÃİ´Î£©
- * @param new_val ±¾´ÎADC²ÉÑùµÄÔ­Ê¼Öµ
- * @return T ¸´ºÏÂË²¨ºóµÄ½á¹û
- * @note ÊÊºÏ¼ÈÓĞ¼â·å¸ÉÈÅÓÖÓĞËæ»úÔëÉùµÄADC²ÉÑù³¡¾°£¨Èç´¥Ãş°´¼ü¡¢Ä£Äâ´«¸ĞÆ÷£©
+ * @brief ä¸­å€¼ + å‡å€¼æ»¤æ³¢
  */
 template <typename T = uint16_t, size_t median_size = 3, size_t avg_size = 8>
 FORCE_INLINE T adc_filter_median_average (T new_val) noexcept {
-    // ÏÈÖĞÖµÂË²¨È¥¼â·å£¬ÔÙÒÆ¶¯Æ½¾ùÂË²¨È¥Ëæ»úÔëÉù
     T med_val = adc_filter_median<T, median_size> (new_val);
     T filt_val = adc_filter_moving_average<T, avg_size> (med_val);
     return filt_val;
 }
 
 /**
- * @brief Ö¸ÊıÆ½»¬ÂË²¨
- * @details »ùÓÚÀúÊ·ÖµºÍµ±Ç°ÖµµÄ¼ÓÈ¨Æ½¾ù£¬¶¯Ì¬ÏìÓ¦¿ìÓÚÒÆ¶¯Æ½¾ù£¬ÊÊºÏ¿ìËÙ±ä»¯µÄADCÊı¾İ
- * @tparam T Êı¾İÀàĞÍ£¬Ä¬ÈÏuint16_t£¨ÊÊÅä12Î»ADC£©
- * @tparam alpha_frac Æ½»¬ÏµÊı·Ö×Ó£¬Ä¬ÈÏ1£¨alpha = alpha_frac / alpha_den£©
- * @tparam alpha_den Æ½»¬ÏµÊı·ÖÄ¸£¬Ä¬ÈÏ10£¨alpha½¨Òé·¶Î§0.1~0.3£©
- * @param new_val ±¾´ÎADC²ÉÑùµÄÔ­Ê¼Öµ
- * @return T ÂË²¨ºóµÄ½á¹û
- * @note ²ÉÓÃ¶¨µãÊıÔËËã£¬±ÜÃâ¸¡µã¿ªÏú£»alphaÔ½´ó£¬¸ú×ÙËÙ¶ÈÔ½¿ì£¬Æ½»¬Ğ§¹ûÔ½Èõ£»
- *       Ê×´Îµ÷ÓÃÊ±ÀúÊ·Öµ³õÊ¼»¯Îª0£¬Ç°¼¸´ÎÊä³ö»áÓĞ¹ı¶É¹ı³Ì
+ * @brief æŒ‡æ•°å¹³æ»‘æ»¤æ³¢
  */
 template <typename T = uint16_t, size_t alpha_frac = 1, size_t alpha_den = 10>
 FORCE_INLINE T adc_filter_exponential (T new_val) noexcept {
@@ -105,5 +77,63 @@ FORCE_INLINE T adc_filter_exponential (T new_val) noexcept {
     last_filt_val = filt_val;
     return filt_val;
 }
+
+template <typename T>
+struct LerpValue {
+    T start = {};
+    T current = {};
+    T target = {};
+    uint32_t duration_ms = 0;
+    uint32_t start_ms = 0;
+    bool active = false;
+    bool smooth = true;
+
+    LerpValue() = default;
+    explicit LerpValue(T initial) : start(initial), current(initial), target(initial) {}
+
+    void reset(T value) {
+        start = value;
+        current = value;
+        target = value;
+        duration_ms = 0;
+        start_ms = TimerUtil::getCurrentMs();
+        active = false;
+    }
+
+    void setTarget(T new_target, uint32_t ms, bool use_smoothstep = true) {
+        start = current;
+        target = new_target;
+        duration_ms = ms;
+        start_ms = TimerUtil::getCurrentMs();
+        smooth = use_smoothstep;
+        active = true;
+
+        if (duration_ms == 0 || start == target) {
+            current = target;
+            active = false;
+        }
+    }
+
+    T update() {
+        if (!active) return current;
+
+        const uint32_t now = TimerUtil::getCurrentMs();
+        const uint32_t elapsed = now - start_ms;
+
+        if (elapsed >= duration_ms) {
+            current = target;
+            active = false;
+            return current;
+        }
+
+        const float t = static_cast<float>(elapsed) / static_cast<float>(duration_ms);
+        current = smooth ? Math::smoothstep<T>(start, target, t) : Math::lerp<T>(start, target, t);
+        return current;
+    }
+
+    bool finished() const {
+        return !active;
+    }
+};
 
 }  // namespace Utils

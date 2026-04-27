@@ -41,8 +41,8 @@ User/Io/GpioManager.o: ../User/Io/GpioManager.cpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/Math.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/Vector.hpp \
  d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/TimerUtil.hpp \
- ../User/Io/Expands/R_Upwheel.hpp ../User/Io/Expands/L_Upwheel.hpp \
- ../User/Io/Expands/Wwdg.hpp
+ ../User/Io/Expands/Wwdg.hpp ../User/Io/Expands/ST7789.hpp \
+ ../User/Io/Expands/../../Utils/DisplayGfx.hpp
 
 ../User/Io/GpioManager.hpp:
 
@@ -132,8 +132,8 @@ d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/Vector.hpp:
 
 d:/文档/MounRiver/FreeRtos-Ch32v203/User/Utils/TimerUtil.hpp:
 
-../User/Io/Expands/R_Upwheel.hpp:
-
-../User/Io/Expands/L_Upwheel.hpp:
-
 ../User/Io/Expands/Wwdg.hpp:
+
+../User/Io/Expands/ST7789.hpp:
+
+../User/Io/Expands/../../Utils/DisplayGfx.hpp:
